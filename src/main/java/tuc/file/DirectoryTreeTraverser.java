@@ -68,7 +68,7 @@ public class DirectoryTreeTraverser implements Iterable<String>, ItemProducer<St
         while (produced == null) {
 
             // are we done with this directory?
-            while (!dir.hasNext())
+            while (dir != null && !dir.hasNext())
                 dir = stack.isEmpty() ? null : stack.pop();
 
             // are we done?
