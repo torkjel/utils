@@ -49,7 +49,7 @@ import tuc.Exceptions;
  */
 public abstract class AbstractParser {
 
-    private Document doc;
+    private Element docElem;
 
     /**
      * Create a parser using the {@link SimpleClasspathEntityResolver] entity
@@ -71,7 +71,7 @@ public abstract class AbstractParser {
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             builder.setEntityResolver(er);
-            this.doc = builder.parse(in);
+            this.docElem = builder.parse(in).getDocumentElement();
         } catch (Exception e) {
             throw Exceptions.toRuntimeEx(e);
         } finally {
@@ -84,12 +84,21 @@ public abstract class AbstractParser {
     }
 
     /**
+     * Creates a parser from an existing DOM tree.
+     *
+     * @param rootElem the root of the DOM tree.
+     */
+    protected AbstractParser(Element rootElem) {
+        this.docElem = rootElem;
+    }
+
+    /**
      * Get the root element of the document.
      *
      * @return
      */
     protected Element root() {
-        return doc.getDocumentElement();
+        return docElem;
     }
 
     /**
@@ -123,5 +132,10 @@ public abstract class AbstractParser {
             }
         }
         return children;
+    }
+
+    protected Element getElement(String name) {
+        NodeList nl = root().getElementsByTagName(name);
+        return nl.getLength() == 0 ? null : (Element)nl.item(0);
     }
 }
